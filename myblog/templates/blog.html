@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Blogs</title>
+     <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 20px;
+            color: #333;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin: 20px auto;
+            max-width: 800px;
+        }
+
+        li {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .blog-title {
+            color: #333;
+            cursor: pointer;
+        }
+
+        .blog-title:hover {
+            color: #007bff;
+        }
+
+        .author {
+            font-style: italic;
+            color: #666;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 60%;
+            max-width: 800px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            z-index: 1000;
+            text-align: justify;
+        }
+
+        .popup.active {
+            display: block;
+        }
+
+        .popup-title {
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>All Blogs</h1>
+    <hr>
+    <ul>
+        {% for blog in blogs %}
+            <li>
+                <h2 class="blog-title">{{ blog.title }}</h2>
+                <p class="author">Author: 
+                    {% for author in blog.author.all %}
+                        {{ author.name }}
+                        {% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                </p>
+                <hr>
+                <div class="popup">
+                    <div class="popup-title">{{ blog.title }}</div>
+                    <p class="popup-content">{{ blog.content }}</p>
+                    <p>Authors:
+                        {% for author in blog.author.all %}
+                            {{ author.name}}
+                            {% if not forloop.last %},  {% endif %}
+                        {% endfor %}
+                    </p>
+                </div>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <script>
+        // Function to close all open popup windows
+        function closeAllPopups() {
+            document.querySelectorAll('.popup.active').forEach(function(popup) {
+                popup.classList.remove('active');
+            });
+        }
+
+        // Add click event listener to each blog title
+        document.querySelectorAll('.blog-title').forEach(function(blogTitle) {
+            blogTitle.addEventListener('click', function() {
+                // Close all open popups
+                closeAllPopups();
+                // Toggle visibility of the corresponding popup
+                var popup = this.parentNode.querySelector('.popup');
+                popup.classList.toggle('active');
+            });
+        });
+
+        // Close popups when clicking outside them
+        document.addEventListener('click', function(event) {
+            if (!event.target.closest('.popup') && !event.target.matches('.blog-title')) {
+                closeAllPopups();
+            }
+        });
+    </script>
+</body>
+</html>
